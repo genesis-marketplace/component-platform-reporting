@@ -1,0 +1,42 @@
+pipeline {
+    agent any
+
+    environment {
+        ARTIFACTORY_SETTINGS = credentials('Artifactory-Settings')
+    }
+
+    tools {
+        maven '3.3.9'
+        jdk   'Java 8'
+    }
+
+    stages {
+        stage('Initialize') {
+            steps {
+                sh '''
+                    echo "PATH = ${PATH}"
+                    echo "M2_HOME = ${M2_HOME}"
+                    echo "ARTIFACTORY_SETTINGS = ${ARTIFACTORY_SETTINGS}"
+                    mkdir -p $HOME/.m2
+                    cp -f $ARTIFACTORY_SETTINGS $HOME/.m2/settings.xml
+                '''
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh 'JAVA_TOOL_OPTIONS="-Xmx2048m" jenkins/deploy.sh'
+            }
+        }
+
+        stage("Dependency Check") {
+            steps{
+                dependencyCheckAnalyzer datadir: '.', hintsFile: '', includeCsvReports: false, includeHtmlReports: false, includeJsonReports: false, isAutoupdateDisabled: false, outdir: '', includeVulnReports: true, scanpath: '', skipOnScmChange: false, skipOnUpstreamChange: false, suppressionFile: '', zipExtensions: ''
+
+                dependencyCheckPublisher canComputeNew: false, defaultEncoding: '', healthy: '', pattern: '', unHealthy: ''
+
+                archiveArtifacts allowEmptyArchive: true, artifacts: '**/dependency-check-report.xml', onlyIfSuccessful: true
+            }
+        }
+    }
+}
