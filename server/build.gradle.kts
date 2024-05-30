@@ -2,7 +2,7 @@ ext.set("localDaogenVersion", "REPORTING")
 
 plugins {
     `maven-publish`
-    id("org.gradle.test-retry") version "1.5.8"
+    id("org.gradle.test-retry") version "1.5.9"
     id("com.jfrog.artifactory")
     id("org.sonarqube") version "5.0.0.4638"
 }
