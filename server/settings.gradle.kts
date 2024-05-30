@@ -7,7 +7,7 @@ pluginManagement {
 
         plugins {
             id("global.genesis.settings") version genesisVersion
-            id("com.jfrog.artifactory") version "5.1.13"
+            id("com.jfrog.artifactory") version "5.2.0"
         }
     }
 
